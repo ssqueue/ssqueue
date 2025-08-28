@@ -1,0 +1,14 @@
+github.com/VictoriaMetrics/metrics v1.39.1 h1:AT7jz7oSpAK9phDl5O5Tmy06nXnnzALwqVnf4ros3Ow=
+github.com/VictoriaMetrics/metrics v1.39.1/go.mod h1:XE4uudAAIRaJE614Tl5HMrtoEU6+GDZO4QTnNSsZRuA=
+github.com/cristalhq/aconfig v0.19.0 h1:fAo9ZObtzboHnf+5eAoMfb9KTDU5G/ij8OYO2wbpmM0=
+github.com/cristalhq/aconfig v0.19.0/go.mod h1:9ogrGEt9yU5V4pif/ThkVUfhj8JkdV+iDeahZGgfnDU=
+github.com/mitchellh/mapstructure v1.5.0 h1:jeMsZIYE/09sWLaz43PL7Gy6RuMjD2eJVyuac5Z2hdY=
+github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
+github.com/negasus/tlog v0.1.1 h1:sa8uEGJAIkIEjkI6VCizF/blsHEaOS6tI+AA1C1Yz64=
+github.com/negasus/tlog v0.1.1/go.mod h1:XWgOA43xAoc+Y+ZeutII0aHSN3d18UyXf4aM3cXG5Zs=
+github.com/valyala/fastrand v1.1.0 h1:f+5HkLW4rsgzdNoleUOB69hyT9IlD2ZQh9GyDMfb5G8=
+github.com/valyala/fastrand v1.1.0/go.mod h1:HWqCzkrkg6QXT8V2EXWvXCoow7vLwOFN002oeRzjapQ=
+github.com/valyala/histogram v1.2.0 h1:wyYGAZZt3CpwUiIb9AU/Zbllg1llXyrtApRS815OLoQ=
+github.com/valyala/histogram v1.2.0/go.mod h1:Hb4kBwb4UxsaNbbbh+RRz8ZR6pdodR57tzWUS3BUzXY=
+golang.org/x/sys v0.35.0 h1:vz1N37gP5bs89s7He8XuIYXpyY0+QlsKmzipCbUtyxI=
+golang.org/x/sys v0.35.0/go.mod h1:BJP2sWEmIv4KK5OTEluFJCKSidICx8ciO85XgH3Ak8k=
