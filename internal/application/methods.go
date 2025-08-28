@@ -53,7 +53,7 @@ func (app *Application) Send(_ context.Context, topic string, im *messages.Input
 		return "", ErrNotReady
 	}
 
-	metrics.GetOrCreateCounter("ssqueue_method_sendsync{topic=\"" + topic + "\"}").Inc()
+	metrics.GetOrCreateCounter("ssqueue_method_send{topic=\"" + topic + "\"}").Inc()
 
 	item := queue.AcquireItem()
 	item.ID = rand.Text()
