@@ -25,19 +25,20 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
 	defer cancel()
 
-	logOpts := tlog.Options{
-		AttrColor:  tlog.TextColorGreen,
-		ShowSource: true,
-		TrimSource: true,
-	}
-	h := tlog.New(&logOpts)
-	slog.SetDefault(slog.New(h))
-
 	cfg := config.Load()
 
-	if cfg.Debug {
-		h.SetLevel(slog.LevelDebug)
+	logOpts := tlog.Options{
+		AttrColor: tlog.TextColorGreen,
 	}
+
+	if cfg.Debug {
+		logOpts.ShowSource = true
+		logOpts.TrimSource = true
+		logOpts.Level = slog.LevelDebug
+	}
+
+	h := tlog.New(&logOpts)
+	slog.SetDefault(slog.New(h))
 
 	errRun := run(ctx, cfg)
 	if errRun != nil {
@@ -48,6 +49,8 @@ func main() {
 
 func run(ctx context.Context, cfg *config.Config) error {
 	var wg sync.WaitGroup
+
+	slog.Info("starting application", "version", version)
 
 	app := application.New()
 
