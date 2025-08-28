@@ -5,9 +5,15 @@ import (
 	"log/slog"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/ssqueue/ssqueue/internal/application"
+)
+
+const (
+	snapshotFilePrefix = "ssq-"
+	snapshotFileExt    = ".snap"
 )
 
 func loadLastSnapshot(snapshotPath string) (filename string, data []byte, err error) {
@@ -19,12 +25,23 @@ func loadLastSnapshot(snapshotPath string) (filename string, data []byte, err er
 		return "", nil, nil
 	}
 	// Find the latest snapshot by name (assuming lexicographical order corresponds to creation time)
-	latest := entries[0]
+	var latest os.DirEntry
 	for _, entry := range entries[1:] {
+		if !strings.HasPrefix(entry.Name(), snapshotFilePrefix) || !strings.HasSuffix(entry.Name(), snapshotFileExt) {
+			continue
+		}
+		if latest == nil {
+			latest = entry
+			continue
+		}
 		if entry.Name() > latest.Name() {
 			latest = entry
 		}
 	}
+	if latest == nil {
+		return "", nil, nil
+	}
+
 	filepath := path.Join(snapshotPath, latest.Name())
 	data, errReadFile := os.ReadFile(filepath)
 	if errReadFile != nil {
@@ -35,7 +52,7 @@ func loadLastSnapshot(snapshotPath string) (filename string, data []byte, err er
 }
 
 func saveSnapshot(snapshotPath string, data []byte) (filename string, err error) {
-	filename = fmt.Sprintf("ssq-%d.snap", time.Now().UTC().UnixNano())
+	filename = fmt.Sprintf("%s%d%s", snapshotFilePrefix, time.Now().UTC().UnixNano(), snapshotFileExt)
 	filepath := path.Join(snapshotPath, filename)
 	errWrite := os.WriteFile(filepath, data, 0o644)
 	if errWrite != nil {
@@ -46,6 +63,13 @@ func saveSnapshot(snapshotPath string, data []byte) (filename string, err error)
 }
 
 func toSnapshot(snapshotPath string, app *application.Application) error {
+	if !strings.HasPrefix(snapshotPath, "/") {
+		wd, errWd := os.Getwd()
+		if errWd == nil {
+			snapshotPath = path.Join(wd, snapshotPath)
+		}
+	}
+
 	data, errSnapshot := app.ToSnapshot()
 	if errSnapshot != nil {
 		return fmt.Errorf("creating snapshot failed: %s", errSnapshot.Error())
@@ -66,13 +90,20 @@ func toSnapshot(snapshotPath string, app *application.Application) error {
 }
 
 func fromSnapshot(snapshotPath string, app *application.Application) error {
+	if !strings.HasPrefix(snapshotPath, "/") {
+		wd, errWd := os.Getwd()
+		if errWd == nil {
+			snapshotPath = path.Join(wd, snapshotPath)
+		}
+	}
+
 	snapshotFilename, snapshotData, errLoadSnapshot := loadLastSnapshot(snapshotPath)
 	if errLoadSnapshot != nil {
 		return fmt.Errorf("loading last snapshot failed: %s", errLoadSnapshot.Error())
 	}
 
 	if snapshotFilename == "" {
-		slog.Info("no snapshots found")
+		slog.Info("no snapshots found", "path", snapshotPath)
 		return nil
 	}
 
