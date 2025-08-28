@@ -3,7 +3,6 @@ package application
 import (
 	"context"
 	"encoding/json"
-	"log/slog"
 	"sync"
 	"sync/atomic"
 
@@ -29,11 +28,7 @@ func (app *Application) Run(ctx context.Context, wg *sync.WaitGroup) {
 
 	atomic.StoreInt64(&app.ready, 1)
 
-	slog.Info("application started")
-
 	<-ctx.Done()
-
-	slog.Info("application shutting down")
 
 	atomic.StoreInt64(&app.ready, 0)
 }
