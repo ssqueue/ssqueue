@@ -64,5 +64,5 @@ func (app *Application) Send(_ context.Context, topic string, im *messages.Input
 		return "", ErrNoConsumers
 	}
 
-	return string(item.ID), nil
+	return item.ID, nil
 }
