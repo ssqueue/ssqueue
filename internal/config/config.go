@@ -11,8 +11,8 @@ type Snapshot struct {
 
 type Config struct {
 	Debug          bool     `env:"DEBUG"`
-	Address        string   `env:"ADDRESS"`
-	ServiceAddress string   `env:"SERVICE_ADDRESS"`
+	Address        string   `env:"ADDRESS" default:":8080"`
+	ServiceAddress string   `env:"SERVICE_ADDRESS" default:":8081"`
 	Snapshot       Snapshot `envPrefix:"SNAPSHOT"`
 }
 
