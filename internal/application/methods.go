@@ -17,17 +17,6 @@ var (
 	ErrNotReady    = errors.New("not ready")
 )
 
-// const base32alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
-//
-// func RandomText(dest []byte) []byte {
-// 	src := make([]byte, 26)
-// 	_, _ = rand.Read(src)
-// 	for i := range src {
-// 		dest = append(dest, base32alphabet[src[i]%32])
-// 	}
-// 	return dest
-// }
-
 func (app *Application) Get(ctx context.Context, topic string) (*messages.OutputMessage, error) {
 	if atomic.LoadInt64(&app.ready) != 1 {
 		return nil, ErrNotReady
