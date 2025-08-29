@@ -34,7 +34,6 @@ func (app *Application) Run(ctx context.Context, wg *sync.WaitGroup) {
 }
 
 func (app *Application) FromSnapshot(src []byte) error {
-
 	snapshots := make(map[string]string)
 	errDecode := json.Unmarshal(src, &snapshots)
 	if errDecode != nil {

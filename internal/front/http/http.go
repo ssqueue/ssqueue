@@ -80,6 +80,7 @@ func (h *HTTP) Run(ctx context.Context, wg *sync.WaitGroup, ln net.Listener) {
 
 func (h *HTTP) handlerSend(rw http.ResponseWriter, req *http.Request) {
 	type request struct {
+		Name       string `json:"name"`
 		Topic      string `json:"topic"`
 		Data       string `json:"data"`
 		Persistent bool   `json:"persistent"`
@@ -97,7 +98,7 @@ func (h *HTTP) handlerSend(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	internalID, err := h.app.Send(req.Context(), r.Topic, &messages.InputMessage{Data: r.Data, Persistent: r.Persistent})
+	internalID, err := h.app.Send(req.Context(), r.Topic, &messages.InputMessage{Data: r.Data, Persistent: r.Persistent, Name: r.Name})
 	if err != nil {
 		if errors.Is(err, application.ErrNoConsumers) {
 			http.Error(rw, err.Error(), http.StatusGone)
@@ -114,9 +115,11 @@ func (h *HTTP) handlerSend(rw http.ResponseWriter, req *http.Request) {
 func (h *HTTP) handlerGet(rw http.ResponseWriter, req *http.Request) {
 	type response struct {
 		ID   string `json:"id"`
+		From string `json:"from"`
 		Data string `json:"data"`
 	}
 
+	name := req.URL.Query().Get("name")
 	topic := req.URL.Query().Get("topic")
 
 	timeout := defaultGetTimeout
@@ -149,5 +152,7 @@ func (h *HTTP) handlerGet(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	sendResponse(rw, http.StatusOK, response{ID: om.ID, Data: om.Data})
+	slog.Log(ctx, slog.LevelInfo+1, "receive message", "tag", "trace", slog.String("topic", topic), slog.String("consumer", name), slog.String("producer", om.Name))
+
+	sendResponse(rw, http.StatusOK, response{ID: om.ID, From: om.Name, Data: om.Data})
 }

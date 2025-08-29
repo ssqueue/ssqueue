@@ -40,14 +40,14 @@ func main() {
 	h := tlog.New(&logOpts)
 	slog.SetDefault(slog.New(h))
 
-	errRun := run(ctx, cfg)
+	errRun := run(ctx, cfg, h)
 	if errRun != nil {
 		slog.Error("error run application", "err", errRun)
 		os.Exit(1)
 	}
 }
 
-func run(ctx context.Context, cfg *config.Config) error {
+func run(ctx context.Context, cfg *config.Config, h *tlog.Handler) error {
 	var wg sync.WaitGroup
 
 	slog.Info("starting application", "version", version)
@@ -68,7 +68,9 @@ func run(ctx context.Context, cfg *config.Config) error {
 	if errLnMain != nil {
 		return errLnMain
 	}
-	defer lnMain.Close()
+	defer func() {
+		_ = lnMain.Close()
+	}()
 
 	srvMain := http.New(app)
 	wg.Add(1)
@@ -79,9 +81,11 @@ func run(ctx context.Context, cfg *config.Config) error {
 		if errLnService != nil {
 			return errLnService
 		}
-		defer lnService.Close()
+		defer func() {
+			_ = lnService.Close()
+		}()
 
-		srv := service.New()
+		srv := service.New(h)
 
 		wg.Add(1)
 		go srv.Run(ctx, &wg, lnService)

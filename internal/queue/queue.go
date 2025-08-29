@@ -24,6 +24,7 @@ func ReleaseItem(item *Item) {
 type Item struct {
 	ID   string `json:"id,omitempty"`
 	Data string `json:"data,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 func (i *Item) reset() {

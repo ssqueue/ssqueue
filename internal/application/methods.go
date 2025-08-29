@@ -34,7 +34,7 @@ func (app *Application) Get(ctx context.Context, topic string) (*messages.Output
 		return nil, nil
 	}
 
-	return &messages.OutputMessage{ID: item.ID, Data: item.Data}, nil
+	return &messages.OutputMessage{ID: item.ID, Data: item.Data, Name: item.Name}, nil
 }
 
 func (app *Application) Send(_ context.Context, topic string, im *messages.InputMessage) (string, error) {
@@ -47,6 +47,7 @@ func (app *Application) Send(_ context.Context, topic string, im *messages.Input
 	item := queue.AcquireItem()
 	item.ID = rand.Text()
 	item.Data = im.Data
+	item.Name = im.Name
 
 	added := app.getQueue(topic).Push(item, im.Persistent)
 	if !added {
